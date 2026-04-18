@@ -18,11 +18,12 @@
            (-> (reitit-ring/ring-handler
                 (reitit-ring/router
                  routes
-                 {:data {:coercion   malli-coercion/coercion
-                         :middleware [muuntaja-mw/format-middleware
-                                      ring-coercion/coerce-exceptions-middleware
-                                      ring-coercion/coerce-request-middleware
-                                      ring-coercion/coerce-response-middleware]}})
+                 {:data      {:coercion   malli-coercion/coercion
+                              :middleware [muuntaja-mw/format-middleware
+                                           ring-coercion/coerce-exceptions-middleware
+                                           ring-coercion/coerce-request-middleware
+                                           ring-coercion/coerce-response-middleware]}
+                  :conflicts nil})
                 (reitit-ring/create-default-handler))
                mid/wrap-correlation-id)))
 
