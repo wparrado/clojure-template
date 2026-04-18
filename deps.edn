@@ -35,7 +35,7 @@
              :main-opts   ["-m" "cloverage.coverage"
                            "--src-ns-path"  "src"
                            "--test-ns-path" "tests"
-                           "--mincov"       "90"
+                           "--fail-threshold" "90"
                            "--output"       "target/coverage"]}
 
   ;; CVE scan — analyzes project classpath
