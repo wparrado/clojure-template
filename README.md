@@ -284,16 +284,14 @@ clj -M:lint           # static analysis (clj-kondo)
 clj -M:coverage       # run tests + enforce 90% line coverage
 ```
 
-**CVE scan** — requires the full classpath. Run after a clean dependency resolution:
+**CVE scan** — requires a free [NVD API key](https://nvd.nist.gov/developers/request-an-api-key). Export it and run:
 
 ```bash
-clj -X:nvd :classpath "\"$(clj -Spath)\"" :config-filename '"nvd-config.edn"'
+export NVD_API_KEY=your-key-here
+clojure -J-Dclojure.main.report=stderr -M:nvd "nvd-config.edn" "$(clojure -Spath)"
 ```
 
-> Obtain a free NVD API key at https://nvd.nist.gov/developers/request-an-api-key  
-> and export it as `NVD_API_KEY` to avoid rate-limiting.
-
-The scan fails the build on any dependency with CVSS score ≥ 7 (HIGH or CRITICAL).
+> The scan fails the build on any dependency with CVSS score ≥ 7 (HIGH or CRITICAL).
 
 ---
 
@@ -329,7 +327,7 @@ GitHub Actions runs on every push and pull request to `main`.
 | Integration tests | Full flows with in-memory adapters |
 | Architecture tests | Layer boundary violations fail the build |
 | Coverage | Minimum **90%** line coverage (cloverage) |
-| CVE scan | OWASP NVD — fails on CVSS ≥ 7 (HIGH/CRITICAL) |
+| CVE scan | OWASP NVD — fails on CVSS ≥ 7 (HIGH/CRITICAL). Skipped if `NVD_API_KEY` secret is not set. |
 
 ---
 
