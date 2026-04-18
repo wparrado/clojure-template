@@ -39,7 +39,7 @@
                            "--output"       "target/coverage"]}
 
   ;; CVE scan — analyzes project classpath
-  ;; Usage: clj -X:nvd :classpath '"$(clj -Spath)"'
-  :nvd {:replace-deps {nvd-clojure/nvd-clojure {:mvn/version "4.0.0"}}
+  ;; Usage: clojure -J-Dclojure.main.report=stderr -M:nvd "nvd-config.edn" "$(clojure -Spath)"
+  :nvd {:replace-deps {nvd-clojure/nvd-clojure {:mvn/version "5.3.0"}}
         :replace-paths []
-        :exec-fn       nvd-clojure.check/check}}}
+        :main-opts     ["-m" "nvd.task.check"]}}}

@@ -1,4 +1,3 @@
 {;; Fail the build when any CVE has a CVSS score >= 7 (HIGH or CRITICAL)
- :nvd {:fail-on-cvss    7
-       :suppression-file "nvd-suppressions.xml"
-       :output-dir       "target/nvd"}}
+ :nvd {:fail-on-cvss 7
+       :output-dir   "target/nvd"}}
