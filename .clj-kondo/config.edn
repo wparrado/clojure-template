@@ -1,0 +1,43 @@
+{;; Teach clj-kondo that try-result wraps a body like `do`
+ :lint-as {clojure-template.application.result/try-result clojure.core/do
+           ;; with-uow has a [binding expr] binding form like with-open
+           clojure-template.application.result/with-uow   clojure.core/with-open}
+
+ :linters
+ {;; Unused requires/referred vars pollute the namespace
+  :unused-namespace    {:level :warning}
+  :unused-referred-var {:level :warning}
+
+  ;; (use ...) and :refer :all break explicit dependency tracking
+  :use                 {:level :error}
+  :refer-all           {:level :error}
+
+  ;; Redundant forms
+  :redundant-do        {:level :warning}
+  :redundant-let       {:level :warning}
+
+  ;; Prefer (defn f [...] ...) over (def f (fn [...] ...))
+  :def-fn              {:level :warning}
+
+  ;; Warn when a public var is never used outside its namespace
+  :unused-public-var
+  {:level   :warning
+   ;; Ignore protocol methods and -main entry points
+   :exclude {clojure-template.domain.model.entity          [entity-id created-at updated-at deleted?]
+             clojure-template.domain.model.aggregate       [pending-events clear-events]
+             clojure-template.domain.model.value-object    [vo-value]
+             clojure-template.application.result           [ok err success? failure? unwrap map-ok flat-map try-result with-uow]
+             clojure-template.main                         [-main]}}}
+
+ ;; Suppress redundant-do false positives from try-result/with-uow macro expansion
+ :config-in-ns
+ {clojure-template.application.handlers.command-handlers {:linters {:redundant-do {:level :off}}}
+  clojure-template.application.handlers.query-handlers   {:linters {:redundant-do {:level :off}}}
+  clojure-template.unit.application.result-test          {:linters {:redundant-do {:level :off}}}}
+
+ ;; Enforce consistent namespace aliases across the codebase
+ :ns-groups
+ [{:pattern "clojure-template\\.domain\\.ports\\..*"        :name "domain-ports"}
+  {:pattern "clojure-template\\.application\\.ports\\..*"   :name "app-ports"}
+  {:pattern "clojure-template\\.infrastructure\\..*"        :name "infra"}
+  {:pattern "clojure-template\\.presentation\\..*"          :name "presentation"}]}

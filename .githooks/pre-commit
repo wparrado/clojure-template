@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Pre-commit hook: format-check + lint + fast test suites (unit + architecture).
+# Integration tests and CVE scan run only in CI (too slow for local commits).
+set -euo pipefail
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+CYAN='\033[0;36m'
+NC='\033[0m'
+
+step() { echo -e "${CYAN}▶ $1${NC}"; }
+ok()   { echo -e "${GREEN}✓ $1${NC}"; }
+fail() { echo -e "${RED}✗ $1${NC}"; exit 1; }
+
+step "Checking code format..."
+clj -M:format-check || fail "Format check failed — run 'clj -M:format' to fix"
+ok "Format OK"
+
+step "Linting (clj-kondo)..."
+clj -M:lint || fail "Lint errors found"
+ok "Lint OK"
+
+step "Running unit + architecture tests..."
+clj -M:test --focus-meta :unit --focus-meta :architecture 2>/dev/null \
+  || clj -M:test --kaocha.filter/include-meta [:unit :architecture] 2>/dev/null \
+  || clj -M:test
+ok "Tests OK"
+
+echo -e "\n${GREEN}✅ All pre-commit checks passed!${NC}"

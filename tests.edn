@@ -1,0 +1,24 @@
+#kaocha/v1
+{:tests [;; Fast, isolated tests: domain logic and application layer with mocks.
+         ;; Run on every commit via the pre-commit hook.
+         {:id          :unit
+          :type        :kaocha.type/clojure.test
+          :test-paths  ["tests"]
+          :source-paths ["src"]
+          :ns-patterns  ["clojure-template\\.unit\\..*"]}
+
+         ;; Full flows with in-memory adapters (no external services required).
+         ;; Run in CI only to keep commits fast.
+         {:id          :integration
+          :type        :kaocha.type/clojure.test
+          :test-paths  ["tests"]
+          :source-paths ["src"]
+          :ns-patterns  ["clojure-template\\.integration\\..*"]}
+
+         ;; Static dependency checks: verify layer boundary rules are not violated.
+         ;; Run on every commit via the pre-commit hook.
+         {:id          :architecture
+          :type        :kaocha.type/clojure.test
+          :test-paths  ["tests"]
+          :source-paths ["src"]
+          :ns-patterns  ["clojure-template\\.architecture\\..*"]}]}

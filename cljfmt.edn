@@ -1,0 +1,15 @@
+{;; Indent rules for project macros
+ :indents
+ {;; try-result body indents like `do`
+  clojure-template.application.result/try-result [[:block 0]]
+
+  ;; Common macros that take a binding vector
+  defrecord  [[:block 2] [:inner 1]]
+  defprotocol [[:block 1] [:inner 1]]}
+
+ ;; Standard formatting options
+ :remove-surrounding-whitespace? true
+ :remove-trailing-whitespace?    true
+ :remove-consecutive-blank-lines? true
+ :insert-missing-whitespace?     true
+ :align-associative?             false}

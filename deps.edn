@@ -1,0 +1,45 @@
+{:paths ["src" "resources"]
+ :deps {org.clojure/clojure {:mvn/version "1.11.3"}
+        ring/ring-core {:mvn/version "1.12.2"}
+        ring/ring-jetty-adapter {:mvn/version "1.12.2"}
+        metosin/reitit {:mvn/version "0.7.2"}
+        metosin/malli {:mvn/version "0.16.4"}
+        metosin/muuntaja {:mvn/version "0.6.10"}
+        aero/aero {:mvn/version "1.1.6"}
+        com.taoensso/timbre {:mvn/version "6.5.0"}}
+ :aliases
+ {:test {:extra-paths ["tests"]
+         :extra-deps {org.clojure/test.check {:mvn/version "1.1.1"}
+                      lambdaisland/kaocha {:mvn/version "1.91.1392"}
+                      org.clojure/tools.namespace {:mvn/version "1.4.4"}}
+         :main-opts ["-m" "kaocha.runner"]}
+  :run {:main-opts ["-m" "clojure-template.main"]}
+
+  ;; Static analysis
+  :lint {:extra-deps {clj-kondo/clj-kondo {:mvn/version "2024.09.27"}}
+         :main-opts  ["-m" "clj-kondo.main" "--lint" "src" "tests"]}
+
+  ;; Formatting
+  :format {:extra-deps {dev.weavejester/cljfmt {:mvn/version "0.13.0"}}
+           :main-opts  ["-m" "cljfmt.main" "fix" "src" "tests"]}
+
+  :format-check {:extra-deps {dev.weavejester/cljfmt {:mvn/version "0.13.0"}}
+                 :main-opts  ["-m" "cljfmt.main" "check" "src" "tests"]}
+
+  ;; Coverage (minimum 90%)
+  :coverage {:extra-paths ["tests"]
+             :extra-deps  {cloverage/cloverage         {:mvn/version "1.2.4"}
+                           org.clojure/test.check      {:mvn/version "1.1.1"}
+                           lambdaisland/kaocha         {:mvn/version "1.91.1392"}
+                           org.clojure/tools.namespace {:mvn/version "1.4.4"}}
+             :main-opts   ["-m" "cloverage.coverage"
+                           "--src-ns-path"  "src"
+                           "--test-ns-path" "tests"
+                           "--mincov"       "90"
+                           "--output"       "target/coverage"]}
+
+  ;; CVE scan — analyzes project classpath
+  ;; Usage: clj -X:nvd :classpath '"$(clj -Spath)"'
+  :nvd {:replace-deps {nvd-clojure/nvd-clojure {:mvn/version "4.0.0"}}
+        :replace-paths []
+        :exec-fn       nvd-clojure.check/check}}}
