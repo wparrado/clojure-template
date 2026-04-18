@@ -11,6 +11,9 @@ jobs:
     name: Build & Test
     runs-on: ubuntu-latest
 
+    env:
+      NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -67,6 +70,7 @@ jobs:
       # ── Security ─────────────────────────────────────────────────────────────
 
       - name: CVE scan (OWASP NVD)
+        if: env.NVD_API_KEY != ''
         run: clojure -J-Dclojure.main.report=stderr -M:nvd "nvd-config.edn" "$(clojure -Spath)"
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
