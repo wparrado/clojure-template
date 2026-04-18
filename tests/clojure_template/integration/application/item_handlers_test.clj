@@ -65,3 +65,20 @@
                        (let [res (qrys/handle list-h (qry-t/->ListItemsQuery 10 0))]
                             (is (result/success? res))
                             (is (= 2 (:total (:value res))))))))
+
+(deftest delete-item-handler-not-found
+         (testing "DeleteItemHandler returns failure when item does not exist"
+                  (let [{:keys [uow-factory clock]} (make-test-deps)
+                        delete-h (cmds/->DeleteItemHandler uow-factory clock)
+                        res      (cmds/handle delete-h (cmd-t/->DeleteItemCommand "00000000-0000-0000-0000-000000000000"))]
+                       (is (result/failure? res)))))
+
+(deftest list-items-uses-default-limit-and-offset
+         (testing "ListItemsHandler works with nil limit and offset (uses defaults)"
+                  (let [{:keys [uow-factory clock repo]} (make-test-deps)
+                        create-h (cmds/->CreateItemHandler uow-factory clock)
+                        list-h   (qrys/->ListItemsHandler repo)]
+                       (cmds/handle create-h (cmd-t/->CreateItemCommand "Item X" nil 5.0))
+                       (let [res (qrys/handle list-h (qry-t/->ListItemsQuery nil nil))]
+                            (is (result/success? res))
+                            (is (= 1 (:total (:value res))))))))

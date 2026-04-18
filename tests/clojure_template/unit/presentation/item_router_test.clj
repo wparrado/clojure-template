@@ -79,11 +79,39 @@
                resp    (handler req)]
               (is (= 200 (:status resp)))))
 
-;; ── update-item ────────────────────────────────────────────────────────────────
+;; ── search-items ──────────────────────────────────────────────────────────────
 
-(deftest update-item-handler-success-returns-200
-         (let [svc     (make-stub-svc {:update-item (result/ok sample-dto)})
+(deftest search-items-handler-success-returns-200
+         (let [svc     (make-stub-svc {:search-items (result/ok sample-page)})
+               handler (router/search-items-handler svc)
+               req     {:parameters {:query {:name-contains "Widget"}}}
+               resp    (handler req)]
+              (is (= 200 (:status resp)))))
+
+(deftest search-items-handler-failure-returns-error-status
+         (let [e       (errors/validation-error "Invalid param" {})
+               svc     (make-stub-svc {:search-items (result/err e)})
+               handler (router/search-items-handler svc)
+               req     {:parameters {:query {}}}
+               resp    (handler req)]
+              (is (= 422 (:status resp)))))
+
+;; ── update-item failure ────────────────────────────────────────────────────────
+
+(deftest update-item-handler-failure-returns-error-status
+         (let [e       (errors/not-found-error "Item not found" {:id "uuid-123"})
+               svc     (make-stub-svc {:update-item (result/err e)})
                handler (router/update-item-handler svc)
                req     {:parameters {:path {:id "uuid-123"} :body {:name "Updated"}}}
                resp    (handler req)]
-              (is (= 200 (:status resp)))))
+              (is (= 404 (:status resp)))))
+
+;; ── delete-item failure ────────────────────────────────────────────────────────
+
+(deftest delete-item-handler-not-found-returns-404
+         (let [e       (errors/not-found-error "Item not found" {:id "uuid-123"})
+               svc     (make-stub-svc {:delete-item (result/err e)})
+               handler (router/delete-item-handler svc)
+               req     {:parameters {:path {:id "uuid-123"}}}
+               resp    (handler req)]
+              (is (= 404 (:status resp)))))

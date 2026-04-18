@@ -48,3 +48,11 @@
 (deftest error-type-returns-nil-for-plain-exception
          (testing "error-type returns nil for a plain (non ex-info) exception"
                   (is (nil? (errors/error-type (RuntimeException. "plain"))))))
+
+(deftest domain-error-base-constructor
+         (testing "domain-error creates ex-info with ::domain-error type"
+                  (let [e (errors/domain-error "base error" {:detail "x"})]
+                       (is (instance? clojure.lang.ExceptionInfo e))
+                       (is (= ::errors/domain-error (-> e ex-data :type)))
+                       (is (= "base error" (ex-message e)))
+                       (is (= "x" (-> e ex-data :detail))))))
