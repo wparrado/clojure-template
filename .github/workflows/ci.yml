@@ -36,26 +36,26 @@ jobs:
       # ── Quality gates ────────────────────────────────────────────────────────
 
       - name: Format check
-        run: clj -M:format-check
+        run: clojure -M:format-check
 
       - name: Lint (clj-kondo)
-        run: clj -M:lint
+        run: clojure -M:lint
 
       # ── Tests ────────────────────────────────────────────────────────────────
 
       - name: Unit tests
-        run: clj -M:test --focus :unit
+        run: clojure -M:test --focus :unit
 
       - name: Integration tests
-        run: clj -M:test --focus :integration
+        run: clojure -M:test --focus :integration
 
       - name: Architecture tests
-        run: clj -M:test --focus :architecture
+        run: clojure -M:test --focus :architecture
 
       # ── Coverage ─────────────────────────────────────────────────────────────
 
       - name: Coverage (min 90%)
-        run: clj -M:coverage
+        run: clojure -M:coverage
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
@@ -67,6 +67,6 @@ jobs:
       # ── Security ─────────────────────────────────────────────────────────────
 
       - name: CVE scan (OWASP NVD)
-        run: clj -X:nvd :classpath "\"$(clj -Spath)\"" :config-filename '"nvd-config.edn"'
+        run: clojure -X:nvd :classpath "\"$(clojure -Spath)\"" :config-filename '"nvd-config.edn"'
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
